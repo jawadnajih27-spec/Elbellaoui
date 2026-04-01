@@ -1,0 +1,95 @@
+{
+  "store": {
+    "name": "مشتل المنارة",
+    "name_fr": "Pépinière Al Manara",
+    "tagline": "أجود الأغراس والأشجار المثمرة",
+    "description": "مشتل متخصص في إنتاج وتوريد أجود أصناف الأغراس والأشجار المثمرة وغير المثمرة، بخبرة تمتد لأكثر من خمسة عشر عاماً في قطاع الزراعة بالمملكة المغربية.",
+    "owner": {
+      "name": "محمد أمين بنعلي",
+      "title": "مؤسس ومدير مشتل المنارة",
+      "bio": "بدأت رحلتي مع الزراعة منذ الصغر في أحضان الطبيعة المغربية. بعد سنوات من الدراسة والتخصص في علوم الزراعة، قررت أن أُجمع بين الشغف والاحتراف لأُنشئ مشتلاً يليق بأرضنا وتراثنا الزراعي العريق. اليوم، يضم مشتل المنارة مئات الأصناف النادرة والمحلية، ويخدم المزارعين والمهندسين الزراعيين والأسر الراغبة في تخضير محيطها.",
+      "experience_years": 15,
+      "photo": "assets/images/owner.jpg"
+    },
+    "stats": {
+      "varieties": "200+",
+      "clients": "1500+",
+      "experience": "15"
+    },
+    "contact": {
+      "whatsapp": "212600000000",
+      "phone": "0600000000",
+      "facebook": "https://facebook.com/almanara.nursery",
+      "instagram": "https://instagram.com/almanara.nursery",
+      "city": "مراكش، المغرب"
+    }
+  },
+  "categories": [
+    {
+      "id": "olive",
+      "slug": "olive",
+      "name": "شجرة الزيتون",
+      "name_fr": "Olivier",
+      "type": "مثمرة",
+      "short_desc": "أشجار زيتون مثمرة ومزخرفة بأصناف محلية ومستوردة",
+      "image": "assets/images/categories/olive.jpg",
+      "placeholder_color": "#4a6741",
+      "varieties_count": 6,
+      "season": "الخريف - الشتاء",
+      "featured": true
+    },
+    {
+      "id": "citrus",
+      "slug": "citrus",
+      "name": "الحمضيات",
+      "name_fr": "Agrumes",
+      "type": "مثمرة",
+      "short_desc": "برتقال وليمون وكلمنتين وبومبلموس بأجود الأصناف",
+      "image": "assets/images/categories/citrus.jpg",
+      "placeholder_color": "#d97706",
+      "varieties_count": 5,
+      "season": "الشتاء - الربيع",
+      "featured": true
+    },
+    {
+      "id": "fig",
+      "slug": "fig",
+      "name": "شجرة التين",
+      "name_fr": "Figuier",
+      "type": "مثمرة",
+      "short_desc": "أصناف التين المغربية والمتوسطية الأصيلة",
+      "image": "assets/images/categories/fig.jpg",
+      "placeholder_color": "#7c3aed",
+      "varieties_count": 4,
+      "season": "الصيف - الخريف",
+      "featured": false
+    },
+    {
+      "id": "rose",
+      "slug": "rose",
+      "name": "الورد والزهور",
+      "name_fr": "Roses & Fleurs",
+      "type": "زينة",
+      "short_desc": "ورد الطائف والورد الجوري وأصناف تزيينية فاخرة",
+      "image": "assets/images/categories/rose.jpg",
+      "placeholder_color": "#be185d",
+      "varieties_count": 5,
+      "season": "طوال السنة",
+      "featured": false
+    },
+    {
+      "id": "palm",
+      "slug": "palm",
+      "name": "النخيل والأشجار الاستوائية",
+      "name_fr": "Palmiers & Tropicaux",
+      "type": "زينة ومثمرة",
+      "short_desc": "نخيل تمر وجوز الهند وأصناف استوائية نادرة",
+      "image": "assets/images/categories/palm.jpg",
+      "placeholder_color": "#065f46",
+      "varieties_count": 4,
+      "season": "طوال السنة",
+      "featured": true
+    }
+  ]
+}
+
