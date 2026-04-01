@@ -1,0 +1,387 @@
+{
+  "olive": {
+    "category_name": "شجرة الزيتون",
+    "category_desc": "الزيتون من أقدم الأشجار في حوض البحر الأبيض المتوسط، ويزرع في المغرب منذ آلاف السنين. أشجاره متعددة الأغراس بين الإنتاج الزيتي والمائدة والزينة.",
+    "varieties": [
+      {
+        "id": "olive-picholine",
+        "name": "زيتون بيشولين المغربي",
+        "name_fr": "Picholine Marocaine",
+        "image": "assets/images/varieties/olive-picholine.jpg",
+        "purpose": "مزدوج الاستخدام — زيت عالي الجودة ومائدة فاخرة. من أكثر الأصناف انتشاراً في المغرب، يتميز بثماره الخضراء المستطيلة وزيته العطري المتميز.",
+        "stock": 280,
+        "origin": "مغربي أصيل",
+        "fruiting_age": "3-4 سنوات",
+        "productivity": "عالية جداً",
+        "resistance": "متحمل للجفاف والملوحة",
+        "sizes": [
+          { "height": "40-60 سم", "price": 25, "age": "سنة واحدة" },
+          { "height": "60-90 سم", "price": 45, "age": "سنتان" },
+          { "height": "90-130 سم", "price": 75, "age": "3 سنوات" },
+          { "height": "130-170 سم", "price": 120, "age": "4-5 سنوات" }
+        ]
+      },
+      {
+        "id": "olive-arbequina",
+        "name": "زيتون أربيكينا",
+        "name_fr": "Arbequina",
+        "image": "assets/images/varieties/olive-arbequina.jpg",
+        "purpose": "صنف إسباني الأصل مثالي للكثافة العالية. ثماره صغيرة ذات زيت استثنائي بنكهة فاكهية مميزة. يبدأ الإثمار مبكراً ويتحمل الظروف المناخية الصعبة.",
+        "stock": 150,
+        "origin": "إسباني",
+        "fruiting_age": "2-3 سنوات",
+        "productivity": "عالية",
+        "resistance": "متحمل للبرد والجفاف",
+        "sizes": [
+          { "height": "40-60 سم", "price": 30, "age": "سنة واحدة" },
+          { "height": "60-90 سم", "price": 55, "age": "سنتان" },
+          { "height": "90-130 سم", "price": 90, "age": "3 سنوات" },
+          { "height": "130-170 سم", "price": 140, "age": "4-5 سنوات" }
+        ]
+      },
+      {
+        "id": "olive-haouzia",
+        "name": "زيتون الحوزية",
+        "name_fr": "Haouzia",
+        "image": "assets/images/varieties/olive-haouzia.jpg",
+        "purpose": "صنف مغربي أصيل من منطقة الحوز، مزدوج الاستخدام، معروف بقوة شجرته ومقاومته الاستثنائية للظروف الصعبة. محبوب لدى الفلاحين التقليديين.",
+        "stock": 320,
+        "origin": "مغربي — منطقة الحوز",
+        "fruiting_age": "3-5 سنوات",
+        "productivity": "متوسطة إلى عالية",
+        "resistance": "متحمل للجفاف الشديد",
+        "sizes": [
+          { "height": "40-60 سم", "price": 20, "age": "سنة واحدة" },
+          { "height": "60-90 سم", "price": 38, "age": "سنتان" },
+          { "height": "90-130 سم", "price": 65, "age": "3 سنوات" },
+          { "height": "130-170 سم", "price": 100, "age": "4-5 سنوات" }
+        ]
+      },
+      {
+        "id": "olive-decorative",
+        "name": "زيتون زيني كبير السن",
+        "name_fr": "Olivier Décoratif",
+        "image": "assets/images/varieties/olive-decorative.jpg",
+        "purpose": "أشجار زيتون كبيرة السن تُستخدم للتزيين في المشاريع الفندقية والحدائق الراقية والواجهات التجارية. كل شجرة تحفة طبيعية فريدة.",
+        "stock": 18,
+        "origin": "مغربي — أشجار مُقتلعة من مناطق متعددة",
+        "fruiting_age": "مُثمر فعلاً",
+        "productivity": "زينة أساساً",
+        "resistance": "قوي جداً",
+        "sizes": [
+          { "height": "1.5-2 م", "price": 350, "age": "15-20 سنة" },
+          { "height": "2-3 م", "price": 650, "age": "25-35 سنة" },
+          { "height": "+3 م", "price": 1200, "age": "40+ سنة" }
+        ]
+      }
+    ]
+  },
+
+  "citrus": {
+    "category_name": "الحمضيات",
+    "category_desc": "الحمضيات من أكثر الأشجار المثمرة إنتاجية ومردوداً في المغرب، تتنوع أصنافها بين البرتقال والليمون والكلمنتين لتغطي احتياجات السوق طوال الموسم.",
+    "varieties": [
+      {
+        "id": "citrus-navel",
+        "name": "برتقال نافل",
+        "name_fr": "Orange Navel",
+        "image": "assets/images/varieties/citrus-navel.jpg",
+        "purpose": "برتقال المائدة الأشهر عالمياً. ثماره كبيرة وحلوة خالية من البذور، ممتازة للعصير والأكل المباشر. مثالي للمزارع التجارية والحدائق المنزلية.",
+        "stock": 420,
+        "origin": "أمريكي — معتمد محلياً",
+        "fruiting_age": "2-3 سنوات",
+        "productivity": "عالية",
+        "resistance": "متوسط المقاومة للبرد",
+        "sizes": [
+          { "height": "40-60 سم", "price": 35, "age": "سنة واحدة" },
+          { "height": "60-90 سم", "price": 60, "age": "سنتان" },
+          { "height": "90-130 سم", "price": 95, "age": "3 سنوات" },
+          { "height": "130-160 سم", "price": 150, "age": "4 سنوات" }
+        ]
+      },
+      {
+        "id": "citrus-clementine",
+        "name": "كلمنتين سيدي عيسى",
+        "name_fr": "Clémentine Sidi Aissa",
+        "image": "assets/images/varieties/citrus-clementine.jpg",
+        "purpose": "صنف مغربي بامتياز، مرتبط بجودة لا مثيل لها في الأسواق الأوروبية. ثماره صغيرة سهلة التقشير، حلوة ومعطرة، تُحصد في نوفمبر ودجنبر.",
+        "stock": 380,
+        "origin": "مغربي أصيل",
+        "fruiting_age": "2-3 سنوات",
+        "productivity": "عالية جداً",
+        "resistance": "جيد",
+        "sizes": [
+          { "height": "40-60 سم", "price": 40, "age": "سنة واحدة" },
+          { "height": "60-90 سم", "price": 65, "age": "سنتان" },
+          { "height": "90-130 سم", "price": 105, "age": "3 سنوات" },
+          { "height": "130-160 سم", "price": 160, "age": "4 سنوات" }
+        ]
+      },
+      {
+        "id": "citrus-lemon-eureka",
+        "name": "ليمون يوريكا",
+        "name_fr": "Citron Eureka",
+        "image": "assets/images/varieties/citrus-lemon.jpg",
+        "purpose": "أكثر أصناف الليمون إنتاجاً على مدار السنة. ثماره كبيرة وعصيرها وفير. مثالي للاستخدام المنزلي والتجاري في المطاعم وصناعة العصائر.",
+        "stock": 290,
+        "origin": "كاليفورني",
+        "fruiting_age": "2 سنوات",
+        "productivity": "عالية جداً — إثمار مستمر",
+        "resistance": "متحمل للحرارة",
+        "sizes": [
+          { "height": "30-50 سم", "price": 30, "age": "سنة واحدة" },
+          { "height": "50-80 سم", "price": 50, "age": "سنتان" },
+          { "height": "80-120 سم", "price": 85, "age": "3 سنوات" },
+          { "height": "120-150 سم", "price": 130, "age": "4 سنوات" }
+        ]
+      },
+      {
+        "id": "citrus-grapefruit",
+        "name": "بومبلموس أحمر",
+        "name_fr": "Pamplemousse Rouge",
+        "image": "assets/images/varieties/citrus-grapefruit.jpg",
+        "purpose": "الجريب فروت الأحمر المحبوب لنكهته المتوازنة بين الحلاوة والحموضة. غني بمضادات الأكسدة وفيتامين C. يلقى إقبالاً كبيراً في السوق الراقية.",
+        "stock": 140,
+        "origin": "أمريكي",
+        "fruiting_age": "3-4 سنوات",
+        "productivity": "متوسطة إلى عالية",
+        "resistance": "يحتاج ظروف مناسبة",
+        "sizes": [
+          { "height": "40-60 سم", "price": 45, "age": "سنة واحدة" },
+          { "height": "60-90 سم", "price": 75, "age": "سنتان" },
+          { "height": "90-130 سم", "price": 120, "age": "3 سنوات" }
+        ]
+      }
+    ]
+  },
+
+  "fig": {
+    "category_name": "شجرة التين",
+    "category_desc": "شجرة التين من أعرق الأشجار المذكورة في التراث الإنساني، وتزدهر في المناخ المغربي بأصناف محلية فريدة ذات نكهات لا مثيل لها.",
+    "varieties": [
+      {
+        "id": "fig-brown-turkey",
+        "name": "تين بني تركي",
+        "name_fr": "Figue Brown Turkey",
+        "image": "assets/images/varieties/fig-brown.jpg",
+        "purpose": "من أكثر الأصناف انتشاراً وإنتاجاً. ثماره كبيرة ذات قشرة بنية ولب أحمر زاهٍ، حلوة جداً تُؤكل طازجة أو مجففة. يتكيف مع معظم التربات المغربية.",
+        "stock": 200,
+        "origin": "متوسطي",
+        "fruiting_age": "2-3 سنوات",
+        "productivity": "عالية — حصادان في السنة",
+        "resistance": "متحمل للجفاف وشبه متحمل للبرد",
+        "sizes": [
+          { "height": "40-70 سم", "price": 25, "age": "سنة واحدة" },
+          { "height": "70-110 سم", "price": 45, "age": "سنتان" },
+          { "height": "110-150 سم", "price": 70, "age": "3 سنوات" }
+        ]
+      },
+      {
+        "id": "fig-white-kadota",
+        "name": "تين أبيض كادوتا",
+        "name_fr": "Figue Blanche Kadota",
+        "image": "assets/images/varieties/fig-white.jpg",
+        "purpose": "صنف أمريكي فاخر ذو ثمار صفراء شفافة ولب وردي ناعم. نكهته استثنائية تجعله مطلوباً في السوق الراقية والتصدير. يمتاز بمقاومته للتشقق.",
+        "stock": 95,
+        "origin": "أمريكي — كاليفورنيا",
+        "fruiting_age": "2-3 سنوات",
+        "productivity": "عالية",
+        "resistance": "متحمل للحرارة العالية",
+        "sizes": [
+          { "height": "40-70 سم", "price": 35, "age": "سنة واحدة" },
+          { "height": "70-110 سم", "price": 60, "age": "سنتان" },
+          { "height": "110-150 سم", "price": 90, "age": "3 سنوات" }
+        ]
+      },
+      {
+        "id": "fig-black-mission",
+        "name": "تين أسود المشن",
+        "name_fr": "Figue Noire Mission",
+        "image": "assets/images/varieties/fig-black.jpg",
+        "purpose": "واحد من أجود أصناف التين عالمياً. قشرته بنفسجية داكنة تقريباً سوداء، ولبه كثيف وحلو بشكل استثنائي. مثالي للتجفيف والمربيات الفاخرة.",
+        "stock": 75,
+        "origin": "أمريكي",
+        "fruiting_age": "2-3 سنوات",
+        "productivity": "متوسطة إلى عالية",
+        "resistance": "يحتاج حرارة كافية",
+        "sizes": [
+          { "height": "40-70 سم", "price": 40, "age": "سنة واحدة" },
+          { "height": "70-110 سم", "price": 65, "age": "سنتان" },
+          { "height": "110-150 سم", "price": 100, "age": "3 سنوات" }
+        ]
+      },
+      {
+        "id": "fig-local-bejaia",
+        "name": "تين بجاية المغربي",
+        "name_fr": "Figue Locale Béjaïa",
+        "image": "assets/images/varieties/fig-local.jpg",
+        "purpose": "صنف محلي مغربي أصيل، متوارث جيلاً بعد جيل. ثماره ذات نكهة حموضة لطيفة مميزة، مقاوم بشكل طبيعي للأمراض، ويعيش لعقود طويلة.",
+        "stock": 160,
+        "origin": "مغربي أصيل",
+        "fruiting_age": "3-4 سنوات",
+        "productivity": "متوسطة — ثمار ذات قيمة عالية",
+        "resistance": "ممتاز — متأقلم مع المناخ المحلي",
+        "sizes": [
+          { "height": "40-70 سم", "price": 20, "age": "سنة واحدة" },
+          { "height": "70-110 سم", "price": 35, "age": "سنتان" },
+          { "height": "110-150 سم", "price": 55, "age": "3 سنوات" }
+        ]
+      }
+    ]
+  },
+
+  "rose": {
+    "category_name": "الورد والزهور",
+    "category_desc": "الورد ملك الأزهار وزينة الحدائق، ولمحبيه نقدم أجود الأصناف من ورد الطائف المعطر إلى الورد الجوري وأصناف التزيين الفاخرة المناسبة للمناخ المغربي.",
+    "varieties": [
+      {
+        "id": "rose-damascena",
+        "name": "ورد الطائف الدمشقي",
+        "name_fr": "Rose de Damas",
+        "image": "assets/images/varieties/rose-damascena.jpg",
+        "purpose": "أشهر ورد معطر في العالم، أساس صناعة العطور الفاخرة. بتلاته الوردية الكثيفة ورائحته المسكرة تجعله قطعة فنية حية. يُستخدم في استخلاص ماء الورد وزيت الورد.",
+        "stock": 180,
+        "origin": "دمشقي — معتمد بالمغرب",
+        "fruiting_age": "يُزهر في السنة الثانية",
+        "productivity": "موسمي — ربيع وخريف",
+        "resistance": "متحمل للجفاف المعتدل",
+        "sizes": [
+          { "height": "20-40 سم", "price": 30, "age": "شتلة معمرة" },
+          { "height": "40-70 سم", "price": 55, "age": "سنة واحدة" },
+          { "height": "70-100 سم", "price": 85, "age": "سنتان" }
+        ]
+      },
+      {
+        "id": "rose-floribunda",
+        "name": "ورد فلوريبوندا متعدد الألوان",
+        "name_fr": "Rose Floribunda",
+        "image": "assets/images/varieties/rose-floribunda.jpg",
+        "purpose": "صنف هجين مزهر بغزارة طوال الموسم. يأتي بألوان متعددة — أحمر وأصفر ووردي وأبيض وبرتقالي. مثالي للحدائق والتزيين الخارجي وأحواض الزهور.",
+        "stock": 240,
+        "origin": "أوروبي — هجين",
+        "fruiting_age": "يُزهر في السنة الأولى",
+        "productivity": "عالية جداً — مستمر الإزهار",
+        "resistance": "متوسط",
+        "sizes": [
+          { "height": "20-40 سم", "price": 25, "age": "شتلة" },
+          { "height": "40-70 سم", "price": 40, "age": "سنة واحدة" },
+          { "height": "70-100 سم", "price": 65, "age": "سنتان" }
+        ]
+      },
+      {
+        "id": "rose-climbing",
+        "name": "ورد متسلق",
+        "name_fr": "Rose Grimpante",
+        "image": "assets/images/varieties/rose-climbing.jpg",
+        "purpose": "مثالي لتغطية الأسوار والبرغولات والمداخل. ينمو بسرعة ويغطي المساحات الواسعة بأزهار جميلة. يخلق تحفة بصرية لا تُنسى في أي حديقة أو فندق.",
+        "stock": 110,
+        "origin": "أوروبي",
+        "fruiting_age": "يُزهر في السنة الثانية",
+        "productivity": "موسمي — إزهار كثيف",
+        "resistance": "جيد",
+        "sizes": [
+          { "height": "40-70 سم", "price": 35, "age": "سنة واحدة" },
+          { "height": "70-120 سم", "price": 60, "age": "سنتان" },
+          { "height": "120-180 سم", "price": 95, "age": "3 سنوات" }
+        ]
+      },
+      {
+        "id": "rose-miniature",
+        "name": "ورد قزمي فاخر",
+        "name_fr": "Rose Miniature",
+        "image": "assets/images/varieties/rose-mini.jpg",
+        "purpose": "أصناف قزمية أنيقة مثالية للتزيين الداخلي والشرفات والأصص. أزهارها دقيقة ومتقنة كالجواهر. تتوفر بألوان نادرة منها الأسود والأزرق الفاتح.",
+        "stock": 195,
+        "origin": "هجين دولي",
+        "fruiting_age": "يُزهر فوراً",
+        "productivity": "مستمر طوال السنة",
+        "resistance": "يحتاج عناية خاصة",
+        "sizes": [
+          { "height": "15-25 سم", "price": 20, "age": "شتلة" },
+          { "height": "25-40 سم", "price": 35, "age": "6 أشهر" },
+          { "height": "40-60 سم", "price": 50, "age": "سنة واحدة" }
+        ]
+      }
+    ]
+  },
+
+  "palm": {
+    "category_name": "النخيل والأشجار الاستوائية",
+    "category_desc": "النخيل شجرة الكرم والعطاء، ورمز عريق في الحضارة المغربية. نقدم أجود أصناف النخيل من تمر وزينة إلى الأشجار الاستوائية النادرة المناسبة للمناخ المغربي.",
+    "varieties": [
+      {
+        "id": "palm-medjool",
+        "name": "نخيل المجهول",
+        "name_fr": "Palmier Medjoul",
+        "image": "assets/images/varieties/palm-medjool.jpg",
+        "purpose": "ملك التمور العالمي وفخر المغرب. ثماره الكبيرة الكهرمانية ذات اللب الكثيف الحلو تُصنَّف ضمن أغلى التمور في العالم. زراعته استثمار مضمون العائد.",
+        "stock": 85,
+        "origin": "مغربي — تافيلالت",
+        "fruiting_age": "5-7 سنوات من الزراعة",
+        "productivity": "80-100 كغ للنخلة سنوياً",
+        "resistance": "ممتاز للحرارة والجفاف",
+        "sizes": [
+          { "height": "50-80 سم", "price": 150, "age": "سنتان" },
+          { "height": "80-130 سم", "price": 280, "age": "3-4 سنوات" },
+          { "height": "130-200 سم", "price": 520, "age": "5-6 سنوات" },
+          { "height": "+200 سم", "price": 950, "age": "+7 سنوات" }
+        ]
+      },
+      {
+        "id": "palm-canary",
+        "name": "نخيل كناري للزينة",
+        "name_fr": "Palmier des Canaries",
+        "image": "assets/images/varieties/palm-canary.jpg",
+        "purpose": "النخلة الملكية للمشاريع الفندقية والحدائق الراقية. جذعها الفضي المنقوش وسعفها المتدلي يخلق مشهداً بصرياً لا مثيل له. مقاومة استثنائية للرياح والملوحة.",
+        "stock": 45,
+        "origin": "جزر الكناري — معتمد",
+        "fruiting_age": "زينة فقط",
+        "productivity": "زينة",
+        "resistance": "ممتاز — للرياح والملوحة والجفاف",
+        "sizes": [
+          { "height": "60-100 سم", "price": 200, "age": "3 سنوات" },
+          { "height": "100-160 سم", "price": 420, "age": "5 سنوات" },
+          { "height": "160-250 سم", "price": 850, "age": "8-10 سنوات" },
+          { "height": "+250 سم", "price": 1600, "age": "+12 سنة" }
+        ]
+      },
+      {
+        "id": "palm-washingtonia",
+        "name": "نخيل واشنطونيا",
+        "name_fr": "Washingtonia",
+        "image": "assets/images/varieties/palm-washingtonia.jpg",
+        "purpose": "النخلة الأمريكية الأكثر استخداماً في تشجير الأحياء والطرق الكبرى. ينمو بسرعة ويصل لارتفاعات شاهقة، مع الحد الأدنى من الصيانة. مناسب للمناخ المغربي بالكامل.",
+        "stock": 130,
+        "origin": "أمريكي",
+        "fruiting_age": "زينة",
+        "productivity": "زينة — نمو سريع",
+        "resistance": "ممتاز في كل الظروف",
+        "sizes": [
+          { "height": "50-80 سم", "price": 80, "age": "سنتان" },
+          { "height": "80-140 سم", "price": 150, "age": "3 سنوات" },
+          { "height": "140-220 سم", "price": 300, "age": "5 سنوات" },
+          { "height": "+220 سم", "price": 580, "age": "7+ سنوات" }
+        ]
+      },
+      {
+        "id": "palm-bamboo",
+        "name": "خيزران ذهبي",
+        "name_fr": "Bambou Doré",
+        "image": "assets/images/varieties/palm-bamboo.jpg",
+        "purpose": "ليس نخلاً بالمعنى الدقيق لكنه من النباتات الاستوائية المطلوبة جداً. جذوعه الذهبية البراقة مذهلة بصرياً. ممتاز للخصوصية، يشكل جداراً أخضر طبيعياً في فترة قصيرة.",
+        "stock": 220,
+        "origin": "آسيوي — معتمد",
+        "fruiting_age": "لا ينطبق",
+        "productivity": "زينة وخصوصية",
+        "resistance": "ممتاز — سريع جداً",
+        "sizes": [
+          { "height": "50-100 سم", "price": 45, "age": "سنة واحدة" },
+          { "height": "100-180 سم", "price": 90, "age": "سنتان" },
+          { "height": "180-280 سم", "price": 160, "age": "3 سنوات" },
+          { "height": "+280 سم", "price": 280, "age": "4+ سنوات" }
+        ]
+      }
+    ]
+  }
+}
+
