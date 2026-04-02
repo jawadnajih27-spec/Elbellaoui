@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>لوحة التحكم — مشتل المنارة</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/images/style.css" />
   <style>
     /* ── تخصيصات اللوحة ── */
     body { margin: 0; }
@@ -191,7 +191,7 @@
       <label for="patInput">رمز الوصول الشخصي (PAT)</label>
       <div class="pat-input-wrap">
         <input class="admin-input" id="patInput" type="password"
-          placeholder="ghp_..." dir="ltr" autocomplete="off" />
+         placeholder="github_pat_... أو ghp_..." dir="ltr" autocomplete="off" />
         <button class="pat-toggle" onclick="togglePat()" type="button" aria-label="إظهار / إخفاء الرمز">
           <svg id="patEyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -673,7 +673,7 @@ function togglePat() {
 }
 
 async function doLogin() {
-  const repo   = document.getElementById('repoInput').value.trim();
+  const repo   = normalizeRepoInput(document.getElementById('repoInput').value);
   const branch = document.getElementById('branchInput').value.trim() || 'main';
   const pat    = document.getElementById('patInput').value.trim();
   const errEl  = document.getElementById('authError');
@@ -686,9 +686,13 @@ async function doLogin() {
   btn.disabled  = true;
 
   try {
+    * اختبار صحة الرمز أولاً */ 
+const me = await ghFetch('/user', pat); 
+if (!me.ok) throw new Error('bad_token'); 
+
     /* اختبار الوصول للمستودع */
     const r = await ghFetch(`/repos/${repo}`, pat);
-    if (!r.ok) throw new Error('فشل الوصول');
+    if (!r.ok) throw new Error('repo_access_failed');
 
     STATE.repo   = repo;
     STATE.branch = branch;
@@ -701,11 +705,30 @@ async function doLogin() {
 
     await bootAdmin();
   } catch(e) {
-    errEl.textContent = 'تعذّر الاتصال. تحقق من المستودع والرمز.';
+    errEl.textContent = getLoginErrorMessage(e);
     errEl.classList.add('show');
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> الدخول إلى اللوحة';
     btn.disabled = false;
   }
+}
+
+  function normalizeRepoInput(raw) { 
+if (!raw) return ''; 
+let value = raw.trim(); 
+value = value.replace(/^https?:\/\/github\.com\//i, ''); 
+value = value.replace(/^github\.com\//i, ''); 
+value = value.replace(/\.git$/i, ''); 
+value = value.replace(/^\/+|\/+$/g, ''); 
+return value; 
+} 
+function getLoginErrorMessage(err) { 
+if (err.message === 'bad_token') { 
+return 'رمز PAT غير صالح أو منتهي. استخدم رمز GitHub جديد بصلاحيات مناسبة.'; 
+} 
+if (err.message === 'repo_access_failed') { 
+return 'تم التحقق من الرمز، لكن لا يوجد وصول إلى المستودع/الفرع. تحقق من اسم المستودع والصلاحيات.'; 
+} 
+return 'تعذّر الاتصال. تحقق من المستودع والرمز.'; 
 }
 
 function doLogout() {
@@ -741,8 +764,9 @@ function ghFetch(path, pat, opts = {}) {
   return fetch(`${GITHUB_API}${path}`, {
     ...opts,
     headers: {
-      'Authorization': `token ${pat || STATE.pat}`,
+      'Authorization': `Bearer ${pat || STATE.pat}`,
       'Accept': 'application/vnd.github.v3+json',
+      'X-GitHub-Api-Version': '2022-11-28',
       'Content-Type': 'application/json',
       ...(opts.headers || {})
     }
