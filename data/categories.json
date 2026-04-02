@@ -36,6 +36,18 @@
       "placeholder_color": "#4a6741",
       "varieties_count": 0,
       "featured": true
+    },
+    {
+      "id": "olivetree",
+      "slug": "olivetree",
+      "name": "شجرة الزيتون",
+      "type": "مثمرة",
+      "short_desc": "شجرة الزيتون المباركة",
+      "season": "الشتاء",
+      "image": "assets/images/categories/olivetree.jpg",
+      "placeholder_color": "#4a6741",
+      "varieties_count": 0,
+      "featured": true
     }
   ]
 }
