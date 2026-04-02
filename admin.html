@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم — مشتل المنارة</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    /* ── تخصيصات اللوحة ── */
+    body { margin: 0; }
+
+    /* شريط التقدم أثناء النشر */
+    .progress-overlay {
+      position: fixed; inset: 0;
+      background: rgba(26,46,26,.85);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 20px; opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .progress-overlay.is-show { opacity: 1; pointer-events: all; }
+    .progress-title {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl); color: var(--color-ivory);
+      font-weight: 300;
+    }
+    .progress-bar-wrap {
+      width: 320px; height: 4px;
+      background: rgba(255,255,255,.1);
+      border-radius: 99px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-sage), var(--color-gold));
+      border-radius: 99px;
+      width: 0%; transition: width .4s ease;
+    }
+    .progress-step {
+      font-size: var(--text-sm);
+      color: rgba(248,244,237,.6);
+      letter-spacing: .06em;
+    }
+
+    /* قسم المصادقة */
+    .auth-screen {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--color-charcoal);
+      padding: var(--space-6);
+    }
+    .auth-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(201,168,76,.2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-10);
+      width: 100%; max-width: 420px;
+      text-align: center;
+    }
+    .auth-logo {
+      font-family: var(--font-display);
+      font-size: var(--text-3xl);
+      color: var(--color-gold-light);
+      margin-bottom: var(--space-2);
+    }
+    .auth-subtitle {
+      font-size: var(--text-sm);
+      color: rgba(248,244,237,.5);
+      margin-bottom: var(--space-8);
+    }
+    .auth-field { margin-bottom: var(--space-4); text-align: right; }
+    .auth-field label {
+      display: block; font-size: var(--text-xs);
+      color: rgba(248,244,237,.6); letter-spacing: .1em;
+      margin-bottom: var(--space-2);
+    }
+    .auth-error {
+      font-size: var(--text-xs); color: #fca5a5;
+      margin-top: var(--space-3); display: none;
+    }
+    .auth-error.show { display: block; }
+    .auth-notice {
+      font-size: 11px; color: rgba(248,244,237,.3);
+      margin-top: var(--space-5); line-height: 1.6;
+    }
+
+    /* بطاقات الأصناف في لوحة الإدارة */
+    .cat-item {
+      display: flex; align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(201,168,76,.12);
+      background: rgba(255,255,255,.03);
+      margin-bottom: var(--space-3);
+      transition: border-color var(--transition-fast);
+    }
+    .cat-item:hover { border-color: rgba(201,168,76,.3); }
+    .cat-item-thumb {
+      width: 52px; height: 52px;
+      border-radius: var(--radius-md); overflow: hidden;
+      background: rgba(255,255,255,.07); flex-shrink: 0;
+      border: 1px solid rgba(201,168,76,.15);
+    }
+    .cat-item-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .cat-item-thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cat-item-thumb-placeholder svg { opacity: .3; }
+    .cat-item-info { flex: 1; min-width: 0; }
+    .cat-item-name {
+      font-size: var(--text-sm); font-weight: 600;
+      color: var(--color-ivory); margin-bottom: 3px;
+    }
+    .cat-item-meta {
+      font-size: 11px; color: rgba(248,244,237,.45);
+      display: flex; gap: var(--space-3); align-items: center;
+    }
+    .cat-item-actions { display: flex; gap: var(--space-2); }
+
+    /* بطاقات الأنواع */
+    .var-item {
+      display: flex; align-items: center;
+      gap: var(--space-3); padding: var(--space-3);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.02);
+      margin-bottom: var(--space-2);
+    }
+    .var-item-thumb {
+      width: 44px; height: 44px;
+      border-radius: var(--radius-sm); overflow: hidden;
+      flex-shrink: 0; background: rgba(255,255,255,.07);
+    }
+    .var-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .var-item-info { flex: 1; min-width: 0; }
+    .var-item-name { font-size: var(--text-sm); color: var(--color-ivory); font-weight: 500; }
+    .var-item-price { font-size: 11px; color: var(--color-gold); margin-top: 2px; }
+
+    /* معاينة مصغّرة */
+    .preview-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(74,103,65,.3); color: var(--color-sage-light);
+      border: 1px solid rgba(74,103,65,.5);
+      border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600; padding: 3px 10px;
+    }
+
+    /* responsive sidebar */
+    @media (max-width: 900px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-sidebar {
+        position: static; height: auto;
+        border-left: none; border-bottom: 1px solid rgba(201,168,76,.15);
+        display: flex; padding: var(--space-3) var(--space-4);
+        gap: var(--space-2); overflow-x: auto;
+      }
+      .admin-sidebar-section { margin: 0; padding: 0; }
+      .admin-sidebar-label { display: none; }
+      .admin-nav-item { white-space: nowrap; padding: var(--space-2) var(--space-3); }
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+<!-- ══════════════════════════════════
+     شاشة المصادقة
+══════════════════════════════════ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">مشتل المنارة</div>
+    <p class="auth-subtitle">لوحة التحكم — الدخول الآمن</p>
+
+    <div class="auth-field">
+      <label for="repoInput">مستودع GitHub (مستخدم/مستودع)</label>
+      <input class="admin-input" id="repoInput" type="text"
+        placeholder="username/repository" dir="ltr" autocomplete="off" />
+    </div>
+
+    <div class="auth-field">
+      <label for="branchInput">الفرع</label>
+      <input class="admin-input" id="branchInput" type="text"
+        value="main" dir="ltr" autocomplete="off" />
+    </div>
+
+    <div class="auth-field">
+      <label for="patInput">رمز الوصول الشخصي (PAT)</label>
+      <div class="pat-input-wrap">
+        <input class="admin-input" id="patInput" type="password"
+          placeholder="ghp_..." dir="ltr" autocomplete="off" />
+        <button class="pat-toggle" onclick="togglePat()" type="button" aria-label="إظهار / إخفاء الرمز">
+          <svg id="patEyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <button class="admin-btn admin-btn--gold" style="width:100%;justify-content:center;margin-top:8px;"
+      onclick="doLogin()" id="loginBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      الدخول إلى اللوحة
+    </button>
+    <p class="auth-error" id="authError">تعذّر الاتصال. تحقق من المستودع والرمز.</p>
+    <p class="auth-notice">
+      رمز PAT يُخزَّن محلياً في متصفحك فقط ولا يُرسَل إلا لـ GitHub عبر HTTPS.
+      لا يظهر زر اللوحة في المتجر.
+    </p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     اللوحة الرئيسية
+══════════════════════════════════ -->
+<div id="adminApp" style="display:none;">
+
+  <!-- Nav -->
+  <nav class="admin-nav" role="banner">
+    <div class="admin-logo">
+      <span class="admin-logo-dot" aria-hidden="true"></span>
+      لوحة التحكم
+    </div>
+    <div style="display:flex;align-items:center;gap:var(--space-4);">
+      <span class="preview-badge" id="repoLabel" dir="ltr">—</span>
+      <a href="index.html" target="_blank" style="font-size:var(--text-xs);color:rgba(248,244,237,.5);display:flex;align-items:center;gap:5px;text-decoration:none;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        المتجر
+      </a>
+      <button class="admin-btn admin-btn--ghost" onclick="doLogout()" style="padding:6px 14px;font-size:12px;">
+        خروج
+      </button>
+    </div>
+  </nav>
+
+  <!-- Layout -->
+  <div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" role="navigation" aria-label="قائمة اللوحة">
+
+      <div class="admin-sidebar-section">
+        <p class="admin-sidebar-label">عام</p>
+        <button class="admin-nav-item is-active" data-section="dashboard" onclick="switchSection('dashboard',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          لوحة المعلومات
+        </button>
+        <button class="admin-nav-item" data-section="settings" onclick="switchSection('settings',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          إعدادات المتجر
+        </button>
+      </div>
+
+      <div class="admin-sidebar-section">
+        <p class="admin-sidebar-label">المنتجات</p>
+        <button class="admin-nav-item" data-section="categories" onclick="switchSection('categories',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+          إدارة الأصناف
+        </button>
+        <button class="admin-nav-item" data-section="varieties" onclick="switchSection('varieties',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          إدارة الأنواع
+        </button>
+        <button class="admin-nav-item" data-section="addCategory" onclick="switchSection('addCategory',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          إضافة صنف جديد
+        </button>
+        <button class="admin-nav-item" data-section="addVariety" onclick="switchSection('addVariety',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          إضافة نوع جديد
+        </button>
+      </div>
+
+      <div class="admin-sidebar-section">
+        <p class="admin-sidebar-label">النشر</p>
+        <button class="admin-nav-item" data-section="publish" onclick="switchSection('publish',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          النشر على GitHub
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main" id="adminMain">
+
+      <!-- ── قسم 1: لوحة المعلومات ── -->
+      <section class="admin-section is-active" id="sec-dashboard">
+        <h1 class="admin-section-title">لوحة المعلومات</h1>
+        <p class="admin-section-subtitle">نظرة عامة على محتوى متجرك</p>
+
+        <div class="admin-kpi-grid" id="kpiGrid">
+          <div class="admin-kpi">
+            <div class="admin-kpi-label">إجمالي الأصناف</div>
+            <div class="admin-kpi-value" id="kpiCats">—</div>
+          </div>
+          <div class="admin-kpi">
+            <div class="admin-kpi-label">إجمالي الأنواع</div>
+            <div class="admin-kpi-value" id="kpiVars">—</div>
+          </div>
+          <div class="admin-kpi">
+            <div class="admin-kpi-label">الكمية الإجمالية</div>
+            <div class="admin-kpi-value" id="kpiStock">—</div>
+          </div>
+          <div class="admin-kpi">
+            <div class="admin-kpi-label">أدنى سعر</div>
+            <div class="admin-kpi-value" id="kpiMinPrice">—<span class="admin-kpi-unit"> درهم</span></div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">الأصناف الحالية</div>
+          <div id="dashCatList"></div>
+        </div>
+      </section>
+
+
+      <!-- ── قسم 2: إعدادات المتجر ── -->
+      <section class="admin-section" id="sec-settings">
+        <h1 class="admin-section-title">إعدادات المتجر</h1>
+        <p class="admin-section-subtitle">بيانات صاحب المتجر ومعلومات التواصل</p>
+
+        <div class="admin-card">
+          <div class="admin-card-title">هوية المتجر</div>
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="admin-label" for="sName">اسم المتجر</label>
+              <input class="admin-input" id="sName" type="text" placeholder="مشتل المنارة" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="sTagline">الشعار الوصفي</label>
+              <input class="admin-input" id="sTagline" type="text" placeholder="أجود الأغراس..." />
+            </div>
+            <div class="admin-form-group admin-form-group--full">
+              <label class="admin-label" for="sDesc">وصف المتجر</label>
+              <textarea class="admin-textarea" id="sDesc" rows="3" placeholder="وصف مختصر عن المشتل..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">صاحب المتجر</div>
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="admin-label" for="oName">الاسم الكامل</label>
+              <input class="admin-input" id="oName" type="text" placeholder="محمد أمين بنعلي" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="oTitle">المسمى الوظيفي</label>
+              <input class="admin-input" id="oTitle" type="text" placeholder="مؤسس ومدير المشتل" />
+            </div>
+            <div class="admin-form-group admin-form-group--full">
+              <label class="admin-label" for="oBio">نبذة شخصية</label>
+              <textarea class="admin-textarea" id="oBio" rows="4" placeholder="قصتك مع الزراعة..."></textarea>
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="oExp">سنوات الخبرة</label>
+              <input class="admin-input" id="oExp" type="number" placeholder="15" />
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">معلومات التواصل</div>
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="admin-label" for="cWa">واتساب (رقم دولي بدون +)</label>
+              <input class="admin-input" id="cWa" type="text" placeholder="212600000000" dir="ltr" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="cPhone">الهاتف</label>
+              <input class="admin-input" id="cPhone" type="text" placeholder="0600000000" dir="ltr" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="cFb">رابط فيسبوك</label>
+              <input class="admin-input" id="cFb" type="url" placeholder="https://facebook.com/..." dir="ltr" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="cIg">رابط انستغرام</label>
+              <input class="admin-input" id="cIg" type="url" placeholder="https://instagram.com/..." dir="ltr" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="cCity">المدينة</label>
+              <input class="admin-input" id="cCity" type="text" placeholder="مراكش، المغرب" />
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">إحصائيات المتجر (تظهر في الواجهة)</div>
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="admin-label" for="stVar">عدد الأصناف والأنواع</label>
+              <input class="admin-input" id="stVar" type="text" placeholder="200+" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="stCli">عدد العملاء</label>
+              <input class="admin-input" id="stCli" type="text" placeholder="1500+" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="stExp">سنوات الخبرة</label>
+              <input class="admin-input" id="stExp" type="text" placeholder="15" />
+            </div>
+          </div>
+        </div>
+
+        <button class="admin-btn admin-btn--gold" onclick="saveSettings()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          حفظ الإعدادات
+        </button>
+      </section>
+
+
+      <!-- ── قسم 3: إدارة الأصناف ── -->
+      <section class="admin-section" id="sec-categories">
+        <h1 class="admin-section-title">إدارة الأصناف</h1>
+        <p class="admin-section-subtitle">عرض وتعديل وحذف الأصناف الرئيسية</p>
+        <div class="admin-card">
+          <div class="admin-card-title">قائمة الأصناف</div>
+          <div id="catListAdmin"></div>
+        </div>
+      </section>
+
+
+      <!-- ── قسم 4: إدارة الأنواع ── -->
+      <section class="admin-section" id="sec-varieties">
+        <h1 class="admin-section-title">إدارة الأنواع</h1>
+        <p class="admin-section-subtitle">اختر صنفاً لعرض أنواعه وتعديلها</p>
+        <div class="admin-card">
+          <div class="admin-card-title">اختر الصنف</div>
+          <div class="admin-form-group" style="max-width:320px;margin-bottom:var(--space-6);">
+            <label class="admin-label" for="varCatSelect">الصنف</label>
+            <select class="admin-select" id="varCatSelect" onchange="loadVarietyList()"></select>
+          </div>
+          <div id="varListAdmin"></div>
+        </div>
+      </section>
+
+
+      <!-- ── قسم 5: إضافة صنف جديد ── -->
+      <section class="admin-section" id="sec-addCategory">
+        <h1 class="admin-section-title">إضافة صنف جديد</h1>
+        <p class="admin-section-subtitle">سيُنشئ اللوحة تلقائياً بطاقة في الواجهة وصفحة HTML للأنواع</p>
+
+        <div class="admin-card">
+          <div class="admin-card-title">معلومات الصنف</div>
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="admin-label" for="ncName">اسم الصنف بالعربية</label>
+              <input class="admin-input" id="ncName" type="text" placeholder="شجرة الرمان" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="ncSlug">المعرف (بالإنجليزية)</label>
+              <input class="admin-input" id="ncSlug" type="text" placeholder="pomegranate" dir="ltr"
+                oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'')" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="ncType">نوع الشجرة</label>
+              <select class="admin-select" id="ncType">
+                <option value="مثمرة">مثمرة</option>
+                <option value="زينة">زينة</option>
+                <option value="زينة ومثمرة">زينة ومثمرة</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="ncSeason">موسم الحصاد / التوفر</label>
+              <input class="admin-input" id="ncSeason" type="text" placeholder="الصيف - الخريف" />
+            </div>
+            <div class="admin-form-group admin-form-group--full">
+              <label class="admin-label" for="ncDesc">وصف مختصر (يظهر على البطاقة)</label>
+              <input class="admin-input" id="ncDesc" type="text" placeholder="وصف مختصر..." />
+            </div>
+            <div class="admin-form-group admin-form-group--full">
+              <label class="admin-label" for="ncLongDesc">وصف مفصّل (يظهر في صفحة الأنواع)</label>
+              <textarea class="admin-textarea" id="ncLongDesc" rows="3" placeholder="وصف مفصّل عن الصنف..."></textarea>
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label">هل هو صنف مميز؟</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:4px;">
+                <input type="checkbox" id="ncFeatured" style="accent-color:var(--color-gold);width:16px;height:16px;" />
+                <span style="font-size:var(--text-sm);color:rgba(248,244,237,.7);">تمييز هذا الصنف</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">صورة الصنف</div>
+          <div class="admin-upload" id="ncImgDrop" onclick="document.getElementById('ncImgInput').click()">
+            <div class="admin-upload__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <p class="admin-upload__text">اضغط لاختيار صورة أو اسحب وأفلت</p>
+            <p class="admin-upload__hint">JPG, PNG, WebP — حجم أقصى 1MB للأداء الأمثل</p>
+            <img id="ncImgPreview" class="admin-upload__preview" style="display:none;" alt="معاينة الصورة" />
+          </div>
+          <input type="file" id="ncImgInput" accept="image/*" style="display:none;" onchange="previewImage('ncImgInput','ncImgPreview','ncImgDrop')" />
+        </div>
+
+        <button class="admin-btn admin-btn--gold" onclick="addCategory()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          إضافة الصنف ونشره
+        </button>
+      </section>
+
+
+      <!-- ── قسم 6: إضافة نوع جديد ── -->
+      <section class="admin-section" id="sec-addVariety">
+        <h1 class="admin-section-title">إضافة نوع جديد</h1>
+        <p class="admin-section-subtitle">أضف نوعاً جديداً لأحد الأصناف الموجودة</p>
+
+        <div class="admin-card">
+          <div class="admin-card-title">الصنف المستهدف</div>
+          <div class="admin-form-group" style="max-width:320px;">
+            <label class="admin-label" for="nvCatSelect">اختر الصنف</label>
+            <select class="admin-select" id="nvCatSelect"></select>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">معلومات النوع</div>
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="admin-label" for="nvName">اسم النوع</label>
+              <input class="admin-input" id="nvName" type="text" placeholder="زيتون بيشولين..." />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="nvOrigin">المنشأ / الأصل</label>
+              <input class="admin-input" id="nvOrigin" type="text" placeholder="مغربي أصيل" />
+            </div>
+            <div class="admin-form-group admin-form-group--full">
+              <label class="admin-label" for="nvPurpose">الغرض والوصف التفصيلي</label>
+              <textarea class="admin-textarea" id="nvPurpose" rows="3" placeholder="وصف مفصّل لاستخدامات هذا النوع..."></textarea>
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="nvStock">الكمية المتوفرة</label>
+              <input class="admin-input" id="nvStock" type="number" placeholder="100" min="0" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="nvFruiting">عمر الإثمار</label>
+              <input class="admin-input" id="nvFruiting" type="text" placeholder="3-4 سنوات" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="nvProductivity">الإنتاجية</label>
+              <input class="admin-input" id="nvProductivity" type="text" placeholder="عالية جداً" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="nvResistance">مقاومة الجفاف</label>
+              <input class="admin-input" id="nvResistance" type="text" placeholder="متحمل للجفاف الشديد" />
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">الأحجام والأسعار</div>
+          <div class="sizes-list" id="nvSizesList"></div>
+          <button class="admin-btn admin-btn--ghost" onclick="addSizeRow()" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة حجم وسعر
+          </button>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">صورة النوع</div>
+          <div class="admin-upload" id="nvImgDrop" onclick="document.getElementById('nvImgInput').click()">
+            <div class="admin-upload__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <p class="admin-upload__text">اضغط لاختيار صورة</p>
+            <p class="admin-upload__hint">JPG, PNG, WebP — حجم أقصى 1MB</p>
+            <img id="nvImgPreview" class="admin-upload__preview" style="display:none;" alt="معاينة الصورة" />
+          </div>
+          <input type="file" id="nvImgInput" accept="image/*" style="display:none;" onchange="previewImage('nvImgInput','nvImgPreview','nvImgDrop')" />
+        </div>
+
+        <button class="admin-btn admin-btn--gold" onclick="addVariety()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          إضافة النوع ونشره
+        </button>
+      </section>
+
+
+      <!-- ── قسم 7: النشر ── -->
+      <section class="admin-section" id="sec-publish">
+        <h1 class="admin-section-title">النشر على GitHub</h1>
+        <p class="admin-section-subtitle">مزامنة جميع التغييرات مع المستودع</p>
+
+        <div class="admin-kpi-grid" style="margin-bottom:var(--space-6);">
+          <div class="admin-kpi">
+            <div class="admin-kpi-label">المستودع</div>
+            <div style="font-size:var(--text-sm);color:var(--color-gold-light);margin-top:4px;font-family:monospace;" id="pubRepo">—</div>
+          </div>
+          <div class="admin-kpi">
+            <div class="admin-kpi-label">الفرع</div>
+            <div style="font-size:var(--text-sm);color:var(--color-gold-light);margin-top:4px;font-family:monospace;" id="pubBranch">—</div>
+          </div>
+          <div class="admin-kpi">
+            <div class="admin-kpi-label">آخر نشر</div>
+            <div style="font-size:var(--text-sm);color:rgba(248,244,237,.5);margin-top:4px;" id="pubLastTime">لم يتم بعد</div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">ماذا سيتم نشره؟</div>
+          <div id="publishPlan" style="font-size:var(--text-sm);color:rgba(248,244,237,.65);line-height:2;"></div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">سجل النشر</div>
+          <div id="publishLog" style="font-size:12px;color:rgba(248,244,237,.45);line-height:1.9;font-family:monospace;max-height:200px;overflow-y:auto;"></div>
+        </div>
+
+        <button class="admin-btn admin-btn--gold" style="font-size:var(--text-md);padding:var(--space-4) var(--space-8);" onclick="publishAll()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          نشر جميع التغييرات الآن
+        </button>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+
+<!-- شريط النشر السريع -->
+<div class="publish-bar" id="publishBarFloat" style="display:none;" role="status">
+  <span class="publish-bar__text" id="publishBarText">لديك تغييرات غير منشورة</span>
+  <button class="publish-bar__btn" onclick="publishAll()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+    نشر الآن
+  </button>
+</div>
+
+<!-- شريط التقدم -->
+<div class="progress-overlay" id="progressOverlay" role="alert" aria-live="polite">
+  <p class="progress-title">جارٍ النشر على GitHub</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <p class="progress-step" id="progressStep">جارٍ التحضير...</p>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+
+<!-- ══════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── حالة التطبيق ── */
+let STATE = {
+  repo: '', branch: 'main', pat: '',
+  catsData: null,   /* categories.json كاملاً */
+  prodsData: null,  /* products.json كاملاً */
+  dirty: false,     /* هل هناك تغييرات غير منشورة */
+  shas: {}          /* SHA لكل ملف في GitHub */
+};
+
+const GITHUB_API = 'https://api.github.com';
+
+/* ════════════════════════════════════
+   مصادقة
+════════════════════════════════════ */
+function togglePat() {
+  const inp = document.getElementById('patInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+async function doLogin() {
+  const repo   = document.getElementById('repoInput').value.trim();
+  const branch = document.getElementById('branchInput').value.trim() || 'main';
+  const pat    = document.getElementById('patInput').value.trim();
+  const errEl  = document.getElementById('authError');
+  const btn    = document.getElementById('loginBtn');
+
+  errEl.classList.remove('show');
+  if (!repo || !pat) { errEl.textContent = 'يرجى ملء جميع الحقول.'; errEl.classList.add('show'); return; }
+
+  btn.innerHTML = '<span class="spinner"></span> جارٍ التحقق...';
+  btn.disabled  = true;
+
+  try {
+    /* اختبار الوصول للمستودع */
+    const r = await ghFetch(`/repos/${repo}`, pat);
+    if (!r.ok) throw new Error('فشل الوصول');
+
+    STATE.repo   = repo;
+    STATE.branch = branch;
+    STATE.pat    = pat;
+
+    /* حفظ آمن في localStorage */
+    localStorage.setItem('nm_repo',   repo);
+    localStorage.setItem('nm_branch', branch);
+    localStorage.setItem('nm_pat',    btoa(pat));
+
+    await bootAdmin();
+  } catch(e) {
+    errEl.textContent = 'تعذّر الاتصال. تحقق من المستودع والرمز.';
+    errEl.classList.add('show');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> الدخول إلى اللوحة';
+    btn.disabled = false;
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('nm_repo');
+  localStorage.removeItem('nm_branch');
+  localStorage.removeItem('nm_pat');
+  location.reload();
+}
+
+/* ════════════════════════════════════
+   تهيئة اللوحة بعد تسجيل الدخول
+════════════════════════════════════ */
+async function bootAdmin() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('adminApp').style.display   = 'block';
+  document.getElementById('repoLabel').textContent    = STATE.repo;
+  document.getElementById('pubRepo').textContent      = STATE.repo;
+  document.getElementById('pubBranch').textContent    = STATE.branch;
+
+  await loadAllData();
+  populateSelects();
+  renderDashboard();
+  renderSettingsForm();
+  renderCatList();
+  addSizeRow(); /* صف حجم أولي */
+  updatePublishPlan();
+}
+
+/* ════════════════════════════════════
+   GitHub API — helpers
+════════════════════════════════════ */
+function ghFetch(path, pat, opts = {}) {
+  return fetch(`${GITHUB_API}${path}`, {
+    ...opts,
+    headers: {
+      'Authorization': `token ${pat || STATE.pat}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+      ...(opts.headers || {})
+    }
+  });
+}
+
+async function ghGetFile(path) {
+  const r = await ghFetch(`/repos/${STATE.repo}/contents/${path}?ref=${STATE.branch}`);
+  if (!r.ok) return null;
+  const d = await r.json();
+  STATE.shas[path] = d.sha;
+  return JSON.parse(atob(d.content.replace(/\n/g, '')));
+}
+
+async function ghPutFile(path, content, message) {
+  const body = {
+    message,
+    content: btoa(unescape(encodeURIComponent(
+      typeof content === 'string' ? content : JSON.stringify(content, null, 2)
+    ))),
+    branch: STATE.branch
+  };
+  if (STATE.shas[path]) body.sha = STATE.shas[path];
+
+  const r = await ghFetch(`/repos/${STATE.repo}/contents/${path}`, STATE.pat, {
+    method: 'PUT',
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) {
+    const err = await r.json();
+    throw new Error(err.message || 'فشل الرفع');
+  }
+  const data = await r.json();
+  STATE.shas[path] = data.content.sha;
+  return data;
+}
+
+/* ════════════════════════════════════
+   تحميل البيانات من GitHub
+════════════════════════════════════ */
+async function loadAllData() {
+  try {
+    const [cats, prods] = await Promise.all([
+      ghGetFile('data/categories.json'),
+      ghGetFile('data/products.json')
+    ]);
+    STATE.catsData  = cats  || { store: {}, categories: [] };
+    STATE.prodsData = prods || {};
+  } catch(e) {
+    STATE.catsData  = { store: {}, categories: [] };
+    STATE.prodsData = {};
+    showToast('تعذّر تحميل البيانات من GitHub. ستعمل اللوحة بنسخة محلية.', 5000);
+  }
+}
+
+/* ════════════════════════════════════
+   لوحة المعلومات
+════════════════════════════════════ */
+function renderDashboard() {
+  const cats = STATE.catsData.categories || [];
+  const prods = STATE.prodsData;
+
+  let totalVars = 0, totalStock = 0, minPrice = Infinity;
+  cats.forEach(c => {
+    const p = prods[c.id];
+    if (!p) return;
+    (p.varieties || []).forEach(v => {
+      totalVars++;
+      totalStock += (v.stock || 0);
+      (v.sizes || []).forEach(s => { if (s.price < minPrice) minPrice = s.price; });
+    });
+  });
+
+  setText('kpiCats',     cats.length);
+  setText('kpiVars',     totalVars);
+  setText('kpiStock',    totalStock.toLocaleString('ar-MA'));
+  setText('kpiMinPrice', minPrice === Infinity ? '—' : minPrice);
+
+  /* قائمة مصغرة */
+  const el = document.getElementById('dashCatList');
+  if (!el) return;
+  el.innerHTML = cats.length ? cats.map(c => buildCatItem(c, false)).join('') : '<p style="color:rgba(248,244,237,.4);font-size:var(--text-sm);">لا توجد أصناف بعد</p>';
+}
+
+/* ════════════════════════════════════
+   نموذج الإعدادات
+════════════════════════════════════ */
+function renderSettingsForm() {
+  const s = STATE.catsData.store || {};
+  const o = s.owner || {};
+  const c = s.contact || {};
+  const st= s.stats || {};
+
+  setVal('sName',   s.name);
+  setVal('sTagline',s.tagline);
+  setVal('sDesc',   s.description);
+  setVal('oName',   o.name);
+  setVal('oTitle',  o.title);
+  setVal('oBio',    o.bio);
+  setVal('oExp',    o.experience_years);
+  setVal('cWa',     c.whatsapp);
+  setVal('cPhone',  c.phone);
+  setVal('cFb',     c.facebook);
+  setVal('cIg',     c.instagram);
+  setVal('cCity',   c.city);
+  setVal('stVar',   st.varieties);
+  setVal('stCli',   st.clients);
+  setVal('stExp',   st.experience);
+}
+
+function saveSettings() {
+  const s = STATE.catsData.store || {};
+  s.name        = getVal('sName');
+  s.tagline     = getVal('sTagline');
+  s.description = getVal('sDesc');
+  s.owner = s.owner || {};
+  s.owner.name            = getVal('oName');
+  s.owner.title           = getVal('oTitle');
+  s.owner.bio             = getVal('oBio');
+  s.owner.experience_years= parseInt(getVal('oExp')) || 0;
+  s.contact = s.contact || {};
+  s.contact.whatsapp  = getVal('cWa');
+  s.contact.phone     = getVal('cPhone');
+  s.contact.facebook  = getVal('cFb');
+  s.contact.instagram = getVal('cIg');
+  s.contact.city      = getVal('cCity');
+  s.stats = s.stats || {};
+  s.stats.varieties = getVal('stVar');
+  s.stats.clients   = getVal('stCli');
+  s.stats.experience= getVal('stExp');
+  STATE.catsData.store = s;
+  markDirty();
+  showToast('تم حفظ الإعدادات — اضغط "نشر" لرفعها');
+}
+
+/* ════════════════════════════════════
+   إدارة الأصناف
+════════════════════════════════════ */
+function renderCatList() {
+  const cats = STATE.catsData.categories || [];
+  const el   = document.getElementById('catListAdmin');
+  if (!el) return;
+  el.innerHTML = cats.length
+    ? cats.map(c => buildCatItem(c, true)).join('')
+    : '<p style="color:rgba(248,244,237,.4);font-size:var(--text-sm);">لا توجد أصناف بعد. أضف أول صنف من القائمة.</p>';
+}
+
+function buildCatItem(cat, withActions) {
+  const thumbHtml = cat.image
+    ? `<img src="${cat.image}" alt="${cat.name}" style="width:100%;height:100%;object-fit:cover;" />`
+    : `<div class="cat-item-thumb-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a6741" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>`;
+
+  const prods = STATE.prodsData[cat.id];
+  const varCount = prods ? (prods.varieties || []).length : 0;
+
+  const actions = withActions ? `
+    <div class="cat-item-actions">
+      <button class="admin-btn admin-btn--ghost" style="padding:6px 10px;"
+        onclick="editCategory('${cat.id}')" title="تعديل">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+      <button class="admin-btn admin-btn--danger" style="padding:6px 10px;"
+        onclick="deleteCategory('${cat.id}')" title="حذف">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </button>
+    </div>` : '';
+
+  return `
+  <div class="cat-item">
+    <div class="cat-item-thumb">${thumbHtml}</div>
+    <div class="cat-item-info">
+      <div class="cat-item-name">${cat.name}</div>
+      <div class="cat-item-meta">
+        <span>${cat.type || '—'}</span>
+        <span>·</span>
+        <span>${varCount} نوع</span>
+        ${cat.featured ? '<span>·</span><span style="color:var(--color-gold);">مميز</span>' : ''}
+      </div>
+    </div>
+    ${actions}
+  </div>`;
+}
+
+function deleteCategory(id) {
+  if (!confirm(`حذف الصنف "${id}" نهائياً؟ سيُحذف أيضاً من products.json.`)) return;
+  STATE.catsData.categories = (STATE.catsData.categories || []).filter(c => c.id !== id);
+  delete STATE.prodsData[id];
+  markDirty();
+  renderCatList();
+  renderDashboard();
+  populateSelects();
+  showToast('تم الحذف — اضغط "نشر" لتأكيده');
+}
+
+function editCategory(id) {
+  const cat = (STATE.catsData.categories || []).find(c => c.id === id);
+  if (!cat) return;
+  switchSection('addCategory', document.querySelector('[data-section="addCategory"]'));
+  setVal('ncName',    cat.name);
+  setVal('ncSlug',    cat.slug || cat.id);
+  setVal('ncDesc',    cat.short_desc);
+  setVal('ncSeason',  cat.season);
+  setVal('ncLongDesc', STATE.prodsData[id] ? STATE.prodsData[id].category_desc : '');
+  document.getElementById('ncType').value     = cat.type || 'مثمرة';
+  document.getElementById('ncFeatured').checked = !!cat.featured;
+  showToast('تم تحميل بيانات الصنف — عدّل ثم أضفه مجدداً');
+}
+
+/* ════════════════════════════════════
+   إضافة صنف جديد
+════════════════════════════════════ */
+async function addCategory() {
+  const name    = getVal('ncName');
+  const slug    = getVal('ncSlug');
+  const desc    = getVal('ncDesc');
+  const season  = getVal('ncSeason');
+  const type    = document.getElementById('ncType').value;
+  const featured= document.getElementById('ncFeatured').checked;
+  const longDesc= getVal('ncLongDesc');
+
+  if (!name || !slug) { showToast('يرجى ملء الاسم والمعرف على الأقل'); return; }
+
+  /* رفع الصورة إن وجدت */
+  let imgPath = '';
+  const fileInput = document.getElementById('ncImgInput');
+  if (fileInput.files[0]) {
+    try {
+      imgPath = await uploadImage(fileInput.files[0], `assets/images/categories/${slug}.jpg`);
+    } catch(e) { showToast('فشل رفع الصورة: ' + e.message); }
+  }
+
+  /* تحديث categories */
+  const cats = STATE.catsData.categories || [];
+  const existing = cats.findIndex(c => c.id === slug);
+  const catObj = {
+    id: slug, slug, name, type,
+    short_desc: desc, season,
+    image: imgPath || `assets/images/categories/${slug}.jpg`,
+    placeholder_color: '#4a6741',
+    varieties_count: 0, featured
+  };
+  if (existing >= 0) cats[existing] = catObj;
+  else cats.push(catObj);
+  STATE.catsData.categories = cats;
+
+  /* تحديث products */
+  if (!STATE.prodsData[slug]) {
+    STATE.prodsData[slug] = { category_name: name, category_desc: longDesc, varieties: [] };
+  } else {
+    STATE.prodsData[slug].category_name = name;
+    if (longDesc) STATE.prodsData[slug].category_desc = longDesc;
+  }
+
+  markDirty();
+  renderCatList();
+  renderDashboard();
+  populateSelects();
+
+  /* تفريغ الحقول */
+  ['ncName','ncSlug','ncDesc','ncSeason','ncLongDesc'].forEach(id => setVal(id, ''));
+  document.getElementById('ncFeatured').checked = false;
+  document.getElementById('ncImgPreview').style.display = 'none';
+  fileInput.value = '';
+
+  showToast(`تم إضافة صنف "${name}" — اضغط "نشر" لرفعه`);
+  showPublishBar();
+}
+
+/* ════════════════════════════════════
+   إدارة الأنواع
+════════════════════════════════════ */
+function loadVarietyList() {
+  const catId = document.getElementById('varCatSelect').value;
+  const el    = document.getElementById('varListAdmin');
+  if (!el) return;
+  const prods = STATE.prodsData[catId];
+  const vars  = prods ? (prods.varieties || []) : [];
+  el.innerHTML = vars.length
+    ? vars.map((v,i) => buildVarItem(v, catId, i)).join('')
+    : '<p style="color:rgba(248,244,237,.4);font-size:var(--text-sm);">لا توجد أنواع لهذا الصنف بعد.</p>';
+}
+
+function buildVarItem(v, catId, idx) {
+  const minPrice = v.sizes && v.sizes.length ? Math.min(...v.sizes.map(s => s.price)) : 0;
+  const thumbHtml = v.image
+    ? `<img src="${v.image}" alt="${v.name}" style="width:100%;height:100%;object-fit:cover;" />`
+    : `<div style="width:100%;height:100%;background:#2f4a2f;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a6741" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg></div>`;
+
+  return `
+  <div class="var-item">
+    <div class="var-item-thumb">${thumbHtml}</div>
+    <div class="var-item-info">
+      <div class="var-item-name">${v.name}</div>
+      <div class="var-item-price">يبدأ من ${minPrice} درهم · ${v.stock || 0} وحدة</div>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button class="admin-btn admin-btn--danger" style="padding:5px 9px;"
+        onclick="deleteVariety('${catId}',${idx})" title="حذف">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function deleteVariety(catId, idx) {
+  if (!confirm('حذف هذا النوع نهائياً؟')) return;
+  const vars = STATE.prodsData[catId].varieties;
+  vars.splice(idx, 1);
+  /* تحديث عداد الأصناف */
+  const cat = (STATE.catsData.categories || []).find(c => c.id === catId);
+  if (cat) cat.varieties_count = vars.length;
+  markDirty();
+  loadVarietyList();
+  renderDashboard();
+  showToast('تم حذف النوع — اضغط "نشر" لتأكيده');
+}
+
+/* ════════════════════════════════════
+   إضافة نوع جديد
+════════════════════════════════════ */
+function addSizeRow() {
+  const list = document.getElementById('nvSizesList');
+  const row = document.createElement('div');
+  row.className = 'size-row';
+  row.innerHTML = `
+    <input class="admin-input size-height" type="text" placeholder="مثال: 60-90 سم" />
+    <input class="admin-input size-price" type="number" placeholder="السعر بالدرهم" min="0" />
+    <button class="size-row-delete" onclick="this.parentElement.remove()" type="button" aria-label="حذف هذا الحجم">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  list.appendChild(row);
+}
+
+async function addVariety() {
+  const catId  = document.getElementById('nvCatSelect').value;
+  const name   = getVal('nvName');
+  const origin = getVal('nvOrigin');
+  const purpose= getVal('nvPurpose');
+  const stock  = parseInt(getVal('nvStock')) || 0;
+
+  if (!catId || !name) { showToast('يرجى اختيار الصنف وإدخال الاسم'); return; }
+
+  /* جمع الأحجام */
+  const sizeRows = document.querySelectorAll('#nvSizesList .size-row');
+  const sizes = [];
+  sizeRows.forEach(row => {
+    const h = row.querySelector('.size-height').value.trim();
+    const p = parseFloat(row.querySelector('.size-price').value);
+    if (h && !isNaN(p)) sizes.push({ height: h, price: p });
+  });
+  if (!sizes.length) { showToast('أضف حجماً وسعراً واحداً على الأقل'); return; }
+
+  /* رفع الصورة */
+  let imgPath = '';
+  const fileInput = document.getElementById('nvImgInput');
+  const varId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || Date.now().toString();
+  if (fileInput.files[0]) {
+    try {
+      imgPath = await uploadImage(fileInput.files[0], `assets/images/varieties/${catId}-${varId}.jpg`);
+    } catch(e) { showToast('فشل رفع الصورة: ' + e.message); }
+  }
+
+  const varObj = {
+    id: `${catId}-${varId}`,
+    name, origin, purpose, stock,
+    fruiting_age:  getVal('nvFruiting'),
+    productivity:  getVal('nvProductivity'),
+    resistance:    getVal('nvResistance'),
+    image: imgPath || `assets/images/varieties/${catId}-${varId}.jpg`,
+    sizes
+  };
+
+  if (!STATE.prodsData[catId]) {
+    const cat = (STATE.catsData.categories || []).find(c => c.id === catId);
+    STATE.prodsData[catId] = { category_name: cat ? cat.name : catId, varieties: [] };
+  }
+  STATE.prodsData[catId].varieties.push(varObj);
+
+  /* تحديث عداد الأنواع */
+  const cat = (STATE.catsData.categories || []).find(c => c.id === catId);
+  if (cat) cat.varieties_count = STATE.prodsData[catId].varieties.length;
+
+  markDirty();
+  renderDashboard();
+
+  /* تفريغ الحقول */
+  ['nvName','nvOrigin','nvPurpose','nvStock','nvFruiting','nvProductivity','nvResistance']
+    .forEach(id => setVal(id, ''));
+  document.getElementById('nvSizesList').innerHTML = '';
+  addSizeRow();
+  document.getElementById('nvImgPreview').style.display = 'none';
+  fileInput.value = '';
+
+  showToast(`تم إضافة نوع "${name}" — اضغط "نشر" لرفعه`);
+  showPublishBar();
+}
+
+/* ════════════════════════════════════
+   رفع الصور — Base64 → GitHub
+════════════════════════════════════ */
+function fileToBase64Compressed(file, maxWidth = 900) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        if (width > maxWidth) { height = Math.round(height * maxWidth / width); width = maxWidth; }
+        canvas.width  = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const b64 = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
+        resolve(b64);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImage(file, path) {
+  const b64  = await fileToBase64Compressed(file);
+  const body = {
+    message: `رفع صورة: ${path}`,
+    content: b64,
+    branch:  STATE.branch
+  };
+  if (STATE.shas[path]) body.sha = STATE.shas[path];
+
+  const r = await ghFetch(`/repos/${STATE.repo}/contents/${path}`, STATE.pat, {
+    method: 'PUT', body: JSON.stringify(body)
+  });
+  if (!r.ok) { const e = await r.json(); throw new Error(e.message); }
+  const data = await r.json();
+  STATE.shas[path] = data.content.sha;
+  return path;
+}
+
+function previewImage(inputId, previewId, dropId) {
+  const file = document.getElementById(inputId).files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById(previewId);
+    img.src = e.target.result;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ════════════════════════════════════
+   النشر الكامل
+════════════════════════════════════ */
+async function publishAll() {
+  if (!STATE.dirty && !confirm('لا توجد تغييرات. هل تريد إعادة نشر البيانات؟')) return;
+
+  showProgress(0, 'تحضير البيانات...');
+
+  const log = document.getElementById('publishLog');
+  const addLog = (msg, ok = true) => {
+    if (!log) return;
+    const color = ok ? 'rgba(168,196,154,.8)' : '#fca5a5';
+    log.innerHTML += `<span style="color:${color};">${new Date().toLocaleTimeString('ar')} — ${msg}</span>\n`;
+    log.scrollTop = log.scrollHeight;
+  };
+
+  try {
+    /* 1. نشر categories.json */
+    showProgress(20, 'نشر categories.json...');
+    await ghPutFile('data/categories.json', STATE.catsData, 'تحديث: categories.json');
+    addLog('categories.json — تم بنجاح');
+
+    /* 2. نشر products.json */
+    showProgress(45, 'نشر products.json...');
+    await ghPutFile('data/products.json', STATE.prodsData, 'تحديث: products.json');
+    addLog('products.json — تم بنجاح');
+
+    /* 3. إنشاء ملفات HTML للأصناف الجديدة */
+    showProgress(65, 'إنشاء صفحات HTML...');
+    const cats = STATE.catsData.categories || [];
+    for (const cat of cats) {
+      const htmlPath = `${cat.slug || cat.id}.html`;
+      const slug = cat.slug || cat.id;
+      const htmlContent = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script>
+  (function(){
+    var slug='${slug}';
+    fetch('template.html').then(r=>r.text()).then(function(html){
+      document.open();document.write(html);document.close();
+      var t=setInterval(function(){
+        if(typeof initCategoryPage==='function'){clearInterval(t);initCategoryPage(slug);}
+      },50);
+    });
+  })();
+<\/script>
+</head><body></body></html>`;
+      /* تحقق أولاً إن كان الملف موجوداً */
+      const existing = await ghFetch(`/repos/${STATE.repo}/contents/${htmlPath}?ref=${STATE.branch}`);
+      if (!existing.ok) {
+        await ghPutFile(htmlPath, htmlContent, `إنشاء صفحة: ${cat.name}`);
+        addLog(`${htmlPath} — تم إنشاؤه`);
+      } else {
+        addLog(`${htmlPath} — موجود مسبقاً`);
+      }
+    }
+
+    showProgress(95, 'إنهاء النشر...');
+    STATE.dirty = false;
+    hidePublishBar();
+
+    const now = new Date().toLocaleString('ar-MA');
+    setText('pubLastTime', now);
+    document.getElementById('publishBarText').textContent = 'تم النشر بنجاح';
+
+    showProgress(100, 'تم بنجاح!');
+    setTimeout(() => hideProgress(), 1800);
+    showToast('تم نشر جميع التغييرات على GitHub بنجاح');
+
+  } catch(e) {
+    hideProgress();
+    addLog('خطأ: ' + e.message, false);
+    showToast('فشل النشر: ' + e.message, 6000);
+  }
+}
+
+/* ════════════════════════════════════
+   Selects
+════════════════════════════════════ */
+function populateSelects() {
+  const cats = STATE.catsData.categories || [];
+  const opts = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  ['varCatSelect','nvCatSelect'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = opts || '<option value="">لا توجد أصناف</option>';
+  });
+}
+
+/* ════════════════════════════════════
+   خطة النشر
+════════════════════════════════════ */
+function updatePublishPlan() {
+  const el = document.getElementById('publishPlan');
+  if (!el) return;
+  const cats = STATE.catsData.categories || [];
+  el.innerHTML = `
+    <div>categories.json — ${cats.length} صنف</div>
+    <div>products.json — ${Object.keys(STATE.prodsData).length} صنف بأنواعه</div>
+    <div>صفحات HTML — ${cats.length} ملف (واحد لكل صنف)</div>
+    <div style="margin-top:8px;color:rgba(248,244,237,.35);font-size:11px;">
+      الصور تُرفع عند إضافة الأصناف / الأنواع مباشرة
+    </div>`;
+}
+
+/* ════════════════════════════════════
+   Progress overlay
+════════════════════════════════════ */
+function showProgress(pct, step) {
+  const ov = document.getElementById('progressOverlay');
+  ov.classList.add('is-show');
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressStep').textContent = step;
+}
+function hideProgress() {
+  document.getElementById('progressOverlay').classList.remove('is-show');
+}
+
+/* ════════════════════════════════════
+   Dirty state
+════════════════════════════════════ */
+function markDirty() {
+  STATE.dirty = true;
+  showPublishBar();
+  updatePublishPlan();
+}
+function showPublishBar() {
+  const pb = document.getElementById('publishBarFloat');
+  if (pb) pb.style.display = 'flex';
+}
+function hidePublishBar() {
+  const pb = document.getElementById('publishBarFloat');
+  if (pb) pb.style.display = 'none';
+}
+
+/* ════════════════════════════════════
+   Toast
+════════════════════════════════════ */
+let toastTimer;
+function showToast(msg, duration = 3500) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('is-show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('is-show'), duration);
+}
+
+/* ════════════════════════════════════
+   تبديل الأقسام
+════════════════════════════════════ */
+function switchSection(name, btn) {
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('is-active'));
+  document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('is-active'));
+  const sec = document.getElementById('sec-' + name);
+  if (sec) sec.classList.add('is-active');
+  if (btn) btn.classList.add('is-active');
+
+  /* تحديث عند الانتقال */
+  if (name === 'varieties')   { populateSelects(); loadVarietyList(); }
+  if (name === 'dashboard')   renderDashboard();
+  if (name === 'publish')     updatePublishPlan();
+}
+
+/* ════════════════════════════════════
+   Helpers
+════════════════════════════════════ */
+function setText(id, v) { const e = document.getElementById(id); if (e) e.textContent = v ?? '—'; }
+function getVal(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+function setVal(id, v) { const e = document.getElementById(id); if (e && v !== undefined && v !== null) e.value = v; }
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+(function init() {
+  /* استعادة البيانات المحفوظة */
+  const repo   = localStorage.getItem('nm_repo');
+  const branch = localStorage.getItem('nm_branch');
+  const pat    = localStorage.getItem('nm_pat');
+
+  if (repo && pat) {
+    document.getElementById('repoInput').value   = repo;
+    document.getElementById('branchInput').value = branch || 'main';
+    document.getElementById('patInput').value    = atob(pat);
+    STATE.repo   = repo;
+    STATE.branch = branch || 'main';
+    STATE.pat    = atob(pat);
+    bootAdmin();
+  }
+})();
+</script>
+
+</body>
+</html>
