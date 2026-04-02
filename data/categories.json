@@ -1,14 +1,14 @@
 {
   "store": {
-    "name": "المنارة",
-    "name_fr": "PÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©piniÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨re Al Manara",
-    "tagline": "المنارة",
-    "description": "المنارة",
+    "name": "Oussama",
+    "name_fr": "PÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©piniÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨re Al Manara",
+    "tagline": "Oussama",
+    "description": "Aghrass store",
     "owner": {
-      "name": "منارة",
-      "title": "منارة",
-      "bio": "منارة",
-      "experience_years": 15,
+      "name": "Oussama",
+      "title": "Détecteur d'aghrass",
+      "bio": "Étudiant et employés en aghrass",
+      "experience_years": 8,
       "photo": "assets/images/owner.jpg"
     },
     "stats": {
@@ -21,17 +21,17 @@
       "phone": "0600000000",
       "facebook": "https://facebook.com/almanara.nursery",
       "instagram": "https://instagram.com/almanara.nursery",
-      "city": "مراكش"
+      "city": "ÙØ±Ø§ÙØ´"
     }
   },
   "categories": [
     {
       "id": "rm",
       "slug": "rm",
-      "name": "شجر الزيتون",
-      "type": "مثمرة",
-      "short_desc": "زيت",
-      "season": "الصيف",
+      "name": "Ø´Ø¬Ø± Ø§ÙØ²ÙØªÙÙ",
+      "type": "ÙØ«ÙØ±Ø©",
+      "short_desc": "Ø²ÙØª",
+      "season": "Ø§ÙØµÙÙ",
       "image": "assets/images/categories/rm.jpg",
       "placeholder_color": "#4a6741",
       "varieties_count": 0,
