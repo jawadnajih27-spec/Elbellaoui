@@ -24,5 +24,18 @@
       "city": "Maroc-Marrakech"
     }
   },
-  "categories": []
+  "categories": [
+    {
+      "id": "njservices",
+      "slug": "njservices",
+      "name": "NJSERVICES",
+      "type": "زينة ومثمرة",
+      "short_desc": "NJSERVICES",
+      "season": "NJSERVICES",
+      "image": "assets/images/categories/njservices.jpg",
+      "placeholder_color": "#4a6741",
+      "varieties_count": 3,
+      "featured": false
+    }
+  ]
 }
