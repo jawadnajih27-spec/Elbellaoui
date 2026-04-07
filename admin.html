@@ -1201,33 +1201,50 @@ async function addVariety() {
 }
 
 /* ════════════════════════════════════
-   رفع الصور — Base64 → GitHub
+   رفع الصور — ضغط ومعالجة قبل الرفع
 ════════════════════════════════════ */
-function fileToBase64Compressed(file, maxWidth = 900) {
+// دالة ضغط الصور الاحترافية لـ NJSERVICES
+async function processAndCompressImage(file) {
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  if (!allowedTypes.includes((file.type || '').toLowerCase())) {
+    throw new Error('صيغة الصورة غير مدعومة. يُسمح فقط بـ JPG وPNG وWebP.');
+  }
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = reject;
-    reader.onload = e => {
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
       const img = new Image();
       img.onerror = reject;
+      img.src = event.target.result;
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        let { width, height } = img;
-        if (width > maxWidth) { height = Math.round(height * maxWidth / width); width = maxWidth; }
-        canvas.width  = width;
+        let width = img.width;
+        let height = img.height;
+
+        // تحجيم ذكي: الحد الأقصى للعرض 1200 بكسل
+        const MAX_WIDTH = 1200;
+        if (width > MAX_WIDTH) {
+          height = Math.round(height * (MAX_WIDTH / width));
+          width = MAX_WIDTH;
+        }
+
+        canvas.width = width;
         canvas.height = height;
-        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        const b64 = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
-        resolve(b64);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // تصدير الصورة بجودة مضغوطة (0.7) لضمان حجم أقل من 1MB
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+        resolve(compressedBase64);
       };
-      img.src = e.target.result;
     };
-    reader.readAsDataURL(file);
   });
 }
 
 async function uploadImage(file, path) {
-  const b64  = await fileToBase64Compressed(file);
+  const b64  = await processAndCompressImage(file);
   const body = {
     message: `رفع صورة: ${path}`,
     content: b64,
