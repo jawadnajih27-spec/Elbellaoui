@@ -1,1 +1,59 @@
-{}
+{
+  "njservices": {
+    "category_name": "NJSERVICES",
+    "category_desc": "NJSERVICES",
+    "varieties": [
+      {
+        "id": "njservices-njservices",
+        "name": "NJSERVICES",
+        "origin": "NJSERVICES",
+        "purpose": "NJSERVICES",
+        "stock": 155,
+        "fruiting_age": "4",
+        "productivity": "NJSERVICES",
+        "resistance": "NJSERVICES",
+        "image": "assets/images/varieties/njservices-njservices.jpg",
+        "sizes": [
+          {
+            "height": "90",
+            "price": 1000
+          }
+        ]
+      },
+      {
+        "id": "njservices-njservices",
+        "name": "NJSERVICES",
+        "origin": "NJSERVICES",
+        "purpose": "NJSERVICES",
+        "stock": 155,
+        "fruiting_age": "",
+        "productivity": "",
+        "resistance": "",
+        "image": "assets/images/varieties/njservices-njservices.jpg",
+        "sizes": [
+          {
+            "height": "90",
+            "price": 1000
+          }
+        ]
+      },
+      {
+        "id": "njservices-njservices",
+        "name": "NJSERVICES",
+        "origin": "NJSERVICES",
+        "purpose": "NJSERVICES",
+        "stock": 1000,
+        "fruiting_age": "5",
+        "productivity": "NJSERVICES",
+        "resistance": "NJSERVICES",
+        "image": "assets/images/varieties/njservices-njservices.jpg",
+        "sizes": [
+          {
+            "height": "90",
+            "price": 2000
+          }
+        ]
+      }
+    ]
+  }
+}
