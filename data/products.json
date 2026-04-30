@@ -25,6 +25,24 @@
   "touiya": {
     "category_name": "Touiya",
     "category_desc": ".....",
-    "varieties": []
+    "varieties": [
+      {
+        "id": "touiya-1777542145627",
+        "name": "التوية",
+        "origin": "مغربية الأصل/القنيطرة",
+        "purpose": "التوية من الأشجار المزينة لجميع الفضاءات، حيث تضفي رونقا طبيعيا خلايا على الحدائق",
+        "stock": 80,
+        "fruiting_age": "3",
+        "productivity": "عالية",
+        "resistance": "لا تتحمل الجفاف",
+        "image": "assets/images/varieties/touiya-1777542145627.jpg",
+        "sizes": [
+          {
+            "height": "1.5 متر",
+            "price": 100
+          }
+        ]
+      }
+    ]
   }
 }
